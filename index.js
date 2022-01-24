@@ -11,3 +11,14 @@
 
 //application must have these classes
 //Employee Manager Engineer Intern
+
+//Employee class must have following properties
+//name, id, email, getName(), getId(), getEmail(), getRole(),//returns employee
+
+//manager will have officeNumber, getRole()//overridden to return Manager
+
+//Engineer will have github//github username, getGitHub(), getRole()//Overidden to return Engineer
+
+//Intern will have school, getSchool(), getRole()//overridden to return 'intern'
+
+const Generate = require('./lib/Employee.js')
