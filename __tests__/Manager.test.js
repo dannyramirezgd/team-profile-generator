@@ -1,0 +1,15 @@
+const Manager = require('../lib/Manager')
+
+test('check to see if manager exists', () => {
+    const manager = new Manager ('Mabel', 1, 'mabel@themanager.com')
+
+    expect(manager.name).toBe('Mabel')
+    expect(manager.id).toEqual(1);
+    expect(manager.email).toBe('mabel@themanager.com')
+})
+
+test('check for correct role',() => {
+    const manager = new Manager ('Mjolnir');
+
+    expect(manager.getRole()).toEqual(expect.stringContaining('Manager'));
+})
