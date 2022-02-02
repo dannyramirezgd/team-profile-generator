@@ -56,27 +56,43 @@ const promptUser = () => {
         }
     ])
 }
-const promptTeamRoles = teamData => {
+const promptTeamRoles = (teamData) => {
     if(!teamData.teamRoles) {
         teamData.teamRoles = [];
-    }
-    return inquirer.prompt([
+        inquirer.prompt([
         {
             type: 'list',
             name: 'roles',
             message: "Which type of team member would you like to add?",
             choices: ['Engineer', 'Intern'],
         },
-    ]).then(inqRes => {
-        teamData.teamRoles = inqRes
-        if(inqRes.roles ==='Engineer'){
-            return promptEngineer(teamData)
-        } else if (inqRes.roles === 'Intern') {
+    ]).then(response => {
+        if(response.roles ==='Engineer'){
+            promptEngineer(teamData)
+        } else if (response.roles === 'Intern') {
             return promptIntern(teamData)
-        } else {
-            return teamData
-        }
-    })
+        } 
+    }) 
+} else {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                name: 'roles',
+                message: "Which type of team member would you like to add?",
+                choices: ['Engineer', 'Intern', "I don't want to add another team member"],
+            },
+        ]).then(response => {
+            if(response.roles ==='Engineer'){
+                return promptEngineer(teamData)
+            } else if (response.roles === 'Intern') {
+                return promptIntern(teamData)
+            } else {
+                console.log(teamData)
+                return teamData
+            }
+        })
+    }
+        
 }
 const promptEngineer = teamData => {
     return inquirer.prompt([
@@ -135,8 +151,9 @@ const promptEngineer = teamData => {
 
     ])
     .then(roleData => {
-        teamData.roles = roleData;
-        return(promptTeamRoles(roleData))
+        roleData.role = 'Engineer'
+        teamData.teamRoles.push(roleData)
+        return(promptTeamRoles(teamData))
     })
 }
 const promptIntern = teamData => {
@@ -196,15 +213,19 @@ const promptIntern = teamData => {
         
     ])    
     .then(roleData => {
-        teamData.roles = roleData;
-        return(promptTeamRoles(roleData))
+        roleData.role = 'Intern'
+        teamData.teamRoles.push(roleData)
+        return(promptTeamRoles(teamData))
     })
 }
 
 promptUser()
-.then(promptTeamRoles)
 .then(teamData => {
-    console.log(teamData)
+    teamData.role = 'Manager'
+    promptTeamRoles(teamData)
+})
+.then(teamData => {
+    return gneratePage(teamData)
 })
 //create a prompt that asks the user several questions
 //first questions: team manager's name, employee ID, email address, office number
