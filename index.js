@@ -1,3 +1,5 @@
+//TO DO: Add Tests for each function in each class
+
 //require the classes from lib
 const Engineer = require('./lib/Engineer.js')
 const Intern = require('./lib/Intern.js')   
