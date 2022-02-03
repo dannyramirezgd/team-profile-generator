@@ -1,9 +1,15 @@
 //TO DO: THE TEMPLATE LITERAL FOR CONSTRUCTING NEW INTERNS AND ENGINEER ISN'T WORKING
 
 //Generate a webpage that displays my team's basic info
+const Engineer = require('./lib/Engineer.js')
+const Intern = require('./lib/Intern.js')   
+const Manager = require('./lib/Manager.js')
 const { writeFile, copyFile } = require('./utils/generate-site.js');
 const generatePage = require('./src/page-template.js');
 const inquirer = require('inquirer');
+
+const team = [];
+
 const mockData = {
     name: 'man ',
     id: 'man id',
@@ -31,248 +37,311 @@ const mockData = {
         ] 
         }
   }
+
 const promptUser = () => {
-    return inquirer.prompt([
+    return inquirer.prompt ([
         {
             type: 'input',
-            name: 'name',
-            message: "What is your team manager's name?",
-            validate: nameInput => {
-                if(nameInput){
-                    return true;
-                } else {
-                    console.log('Please provide valid answer!');
-                    return false;
-                }
-            }
+            message: 'Enter team member name',
+            name: 'name'
         },
-        {
-            type: 'input',
-            name: 'id',
-            message: "What is the team manager's id?",
-            validate: idInput => {
-                if(idInput) {
-                    return true;
-                } else {
-                    console.log('Please provide a valid answer') 
-                    return false;
-                }
-            }
-        },
-        {
-            type: 'input',
-            name: 'email',
-            message: "What is the team manager's email?",
-            validate: emailInput => {
-                if(emailInput) {
-                    return true;
-                } else {
-                    console.log('Please provide a valid answer') 
-                    return false;
-                }
-            }
-        },
-        {
-            type: 'input',
-            name: 'number',
-            message: "What is the team manager's office number?",
-            validate: officeInput => {
-                if(officeInput) {
-                    return true;
-                } else {
-                    console.log('Please provide a valid answer') 
-                    return false;
-                }
-            }
-        }
-    ])
-}
-const promptTeamRoles = (teamData) => {
-    if(!teamData.teamRoles) {
-        teamData.teamRoles = {};
-        return inquirer.prompt([
         {
             type: 'list',
-            name: 'roles',
-            message: "Which type of team member would you like to add?",
-            choices: ['Engineer', 'Intern'],
+            message: 'Select team member role',
+            choices: ['Engineer', 'Intern', 'Manager'],
+            name: 'role'
         },
-    ]).then(response => {
-        if(response.roles ==='Engineer'){
-            return promptEngineer(teamData)
-        } else if (response.roles === 'Intern') {
-            return promptIntern(teamData)
-        } 
-    }) 
-} else {
-        return inquirer.prompt([
-            {
-                type: 'list',
-                name: 'roles',
-                message: "Which type of team member would you like to add?",
-                choices: ['Engineer', 'Intern', "I don't want to add another team member"],
-            },
-        ]).then(response => {
-            if(response.roles ==='Engineer'){
-                return promptEngineer(teamData)
-            } else if (response.roles === 'Intern') {
-                return promptIntern(teamData)
+        {
+            type: 'input',
+            message: 'Enter team member id',
+            name: 'id',
+        },
+        {
+            type:'input',
+            message:'Enter team member email address',
+            name: 'email'
+        }])
+        .then(function({name, role, id, email}){
+            let uniqueTrait = '';
+            if (role === 'Engineer'){
+                uniqueTrait = 'Username'
+            } else if (role === 'Intern'){
+                uniqueTrait = 'School'
             } else {
-                return teamData
+                uniqueTrait = 'Office'
             }
+        return inquirer.prompt ([
+            {
+                type:'input',
+                message: `Enter team member's ${uniqueTrait}`,
+                name: 'uniqueTrait'
+            },
+            {
+                type:'confirm',
+                message: 'Would you like to add more team members',
+                name: 'addTeam'
+            }])
+            .then(function({uniqueTrait, addTeam}){
+                let addMember; 
+                if(role === 'Engineer') {
+                    addMember = new Engineer(name, id, email, uniqueTrait);
+                } else if (role === 'Intern') {
+                    addMember = new Intern (name, id, email, uniqueTrait);
+                } else {
+                    addMember = new Manager (name, id, email, uniqueTrait)
+                }
+                employees.push(addMember)
+                .then(if(addTeam){
+                        promptUser();
+                    } else {
+                        return
+                    };
+                })
+            })
         })
-    }
+}
+// const promptUser = () => {
+//     return inquirer.prompt([
+//         {
+//             type: 'input',
+//             name: 'name',
+//             message: "What is your team manager's name?",
+//             validate: nameInput => {
+//                 if(nameInput){
+//                     return true;
+//                 } else {
+//                     console.log('Please provide valid answer!');
+//                     return false;
+//                 }
+//             }
+//         },
+//         {
+//             type: 'input',
+//             name: 'id',
+//             message: "What is the team manager's id?",
+//             validate: idInput => {
+//                 if(idInput) {
+//                     return true;
+//                 } else {
+//                     console.log('Please provide a valid answer') 
+//                     return false;
+//                 }
+//             }
+//         },
+//         {
+//             type: 'input',
+//             name: 'email',
+//             message: "What is the team manager's email?",
+//             validate: emailInput => {
+//                 if(emailInput) {
+//                     return true;
+//                 } else {
+//                     console.log('Please provide a valid answer') 
+//                     return false;
+//                 }
+//             }
+//         },
+//         {
+//             type: 'input',
+//             name: 'number',
+//             message: "What is the team manager's office number?",
+//             validate: officeInput => {
+//                 if(officeInput) {
+//                     return true;
+//                 } else {
+//                     console.log('Please provide a valid answer') 
+//                     return false;
+//                 }
+//             }
+//         }
+//     ])
+// }
+// const promptTeamRoles = (teamData) => {
+//     if(!teamData.teamRoles) {
+//         teamData.teamRoles = {};
+//         return inquirer.prompt([
+//         {
+//             type: 'list',
+//             name: 'roles',
+//             message: "Which type of team member would you like to add?",
+//             choices: ['Engineer', 'Intern'],
+//         },
+//     ]).then(response => {
+//         if(response.roles ==='Engineer'){
+//             return promptEngineer(teamData)
+//         } else if (response.roles === 'Intern') {
+//             return promptIntern(teamData)
+//         } 
+//     }) 
+// } else {
+//         return inquirer.prompt([
+//             {
+//                 type: 'list',
+//                 name: 'roles',
+//                 message: "Which type of team member would you like to add?",
+//                 choices: ['Engineer', 'Intern', "I don't want to add another team member"],
+//             },
+//         ]).then(response => {
+//             if(response.roles ==='Engineer'){
+//                 return promptEngineer(teamData)
+//             } else if (response.roles === 'Intern') {
+//                 return promptIntern(teamData)
+//             } else {
+//                 return teamData
+//             }
+//         })
+//     }
         
-}
-const promptEngineer = teamData => {
-    return inquirer.prompt([
-        {
-            type:'input',
-            name:'name',
-            message: "What is your engineer's name?",
-            validate: nameInput => {
-                if(nameInput) {
-                    return true;
-                } else {
-                    console.log('Please provide a valid name') 
-                    return false;
-                    }
-                }
-        },
-        {
-            type:'input',
-            name:'id',
-            message: "What is your engineer's id?",
-            validate: idInput => {
-                if(idInput) {
-                    return true;
-                } else {
-                    console.log('Please provide a valid ID') 
-                    return false;
-                    }
-                }
-        },
-        {
-            type:'input',
-            name:'email',
-            message: "What is your engineer's email?",
-            validate: emailInput => {
-                if(emailInput) {
-                    return true;
-                } else {
-                    console.log('Please provide a valid email') 
-                    return false;
-                    }
-                }
-        },
-        {
-            type:'input',
-            name:'github',
-            message: "What is your engineer's github username?",
-            validate: usernameInput => {
-                if(usernameInput) {
-                    return true;
-                } else {
-                    console.log('Please provide a valid username') 
-                    return false;
-                    }
-                }
-        },
+// }
+// const promptEngineer = teamData => {
+//     return inquirer.prompt([
+//         {
+//             type:'input',
+//             name:'name',
+//             message: "What is your engineer's name?",
+//             validate: nameInput => {
+//                 if(nameInput) {
+//                     return true;
+//                 } else {
+//                     console.log('Please provide a valid name') 
+//                     return false;
+//                     }
+//                 }
+//         },
+//         {
+//             type:'input',
+//             name:'id',
+//             message: "What is your engineer's id?",
+//             validate: idInput => {
+//                 if(idInput) {
+//                     return true;
+//                 } else {
+//                     console.log('Please provide a valid ID') 
+//                     return false;
+//                     }
+//                 }
+//         },
+//         {
+//             type:'input',
+//             name:'email',
+//             message: "What is your engineer's email?",
+//             validate: emailInput => {
+//                 if(emailInput) {
+//                     return true;
+//                 } else {
+//                     console.log('Please provide a valid email') 
+//                     return false;
+//                     }
+//                 }
+//         },
+//         {
+//             type:'input',
+//             name:'github',
+//             message: "What is your engineer's github username?",
+//             validate: usernameInput => {
+//                 if(usernameInput) {
+//                     return true;
+//                 } else {
+//                     console.log('Please provide a valid username') 
+//                     return false;
+//                     }
+//                 }
+//         },
 
-    ])
-    .then(roleData => {
-        roleData.role = 'Engineer'
-        if(!teamData.teamRoles.engineers){
-            teamData.teamRoles.engineers = [];
-        }
-        teamData.teamRoles.engineers.push(roleData)
-        return(promptTeamRoles(teamData))
-    })
-}
-const promptIntern = teamData => {
-    return inquirer.prompt([
-        {
-            type:'input',
-            name:'name',
-            message: "What is your intern's name?",
-            validate: nameInput => {
-                if(nameInput) {
-                    return true;
-                } else {
-                    console.log('Please provide a valid name') 
-                    return false;
-                    }
-                }
-        },
-        {
-            type:'input',
-            name:'id',
-            message: "What is your intern's id?",
-            validate: idInput => {
-                if(idInput) {
-                    return true;
-                } else {
-                    console.log('Please provide a valid ID') 
-                    return false;
-                    }
-                }
-        },
-        {
-            type:'input',
-            name:'email',
-            message: "What is your intern's email?",
-            validate: emailInput => {
-                if(emailInput) {
-                    return true;
-                } else {
-                    console.log('Please provide a valid email') 
-                    return false;
-                    }
-                }
-        },
-        {
-            type:'input',
-            name:'school',
-            message: "What is your intern's school?",
-            validate: schoolInput => {
-                if(schoolInput) {
-                    return true;
-                } else {
-                    console.log('Please provide a valid school') 
-                    return false;
-                    }
-                }
-        },
+//     ])
+//     .then(roleData => {
+//         roleData.role = 'Engineer'
+//         if(!teamData.teamRoles.engineers){
+//             teamData.teamRoles.engineers = [];
+//         }
+//         teamData.teamRoles.engineers.push(roleData)
+//         return(promptTeamRoles(teamData))
+//     })
+// }
+// const promptIntern = teamData => {
+//     return inquirer.prompt([
+//         {
+//             type:'input',
+//             name:'name',
+//             message: "What is your intern's name?",
+//             validate: nameInput => {
+//                 if(nameInput) {
+//                     return true;
+//                 } else {
+//                     console.log('Please provide a valid name') 
+//                     return false;
+//                     }
+//                 }
+//         },
+//         {
+//             type:'input',
+//             name:'id',
+//             message: "What is your intern's id?",
+//             validate: idInput => {
+//                 if(idInput) {
+//                     return true;
+//                 } else {
+//                     console.log('Please provide a valid ID') 
+//                     return false;
+//                     }
+//                 }
+//         },
+//         {
+//             type:'input',
+//             name:'email',
+//             message: "What is your intern's email?",
+//             validate: emailInput => {
+//                 if(emailInput) {
+//                     return true;
+//                 } else {
+//                     console.log('Please provide a valid email') 
+//                     return false;
+//                     }
+//                 }
+//         },
+//         {
+//             type:'input',
+//             name:'school',
+//             message: "What is your intern's school?",
+//             validate: schoolInput => {
+//                 if(schoolInput) {
+//                     return true;
+//                 } else {
+//                     console.log('Please provide a valid school') 
+//                     return false;
+//                     }
+//                 }
+//         },
         
-    ])    
-    .then(roleData => {
-        roleData.role = 'Intern'
-        if(!teamData.teamRoles.interns){
-            teamData.teamRoles.interns = [];
-        }
-        teamData.teamRoles.interns.push(roleData)
-        return(promptTeamRoles(teamData))
-    })
-}
+//     ])    
+//     .then(roleData => {
+//         roleData.role = 'Intern'
+//         if(!teamData.teamRoles.interns){
+//             teamData.teamRoles.interns = [];
+//         }
+//         teamData.teamRoles.interns.push(roleData)
+//         return(promptTeamRoles(teamData))
+//     })
+// }
 
-promptUser()
-.then(teamData => {
-    teamData.role = 'Manager'
-    return promptTeamRoles(teamData)
-})
-.then( teamData => {
-    return generatePage(teamData)
-})
-.then(pageHTML => {
-    writeFile(pageHTML)
-})
-.then(response => {
-    console.log(response);
-    return copyFile()
-})
-.then(teamData => {
-    return generatePage(teamData)
-})
+// promptUser()
+// .then(teamData => {
+//     teamData.role = 'Manager'
+//     return promptTeamRoles(teamData)
+// })
+// .then( teamData => {
+//     return generatePage(teamData)
+// })
+// .then(pageHTML => {
+//     writeFile(pageHTML)
+// })
+// .then(response => {
+//     console.log(response);
+//     return copyFile()
+// })
+// .then(teamData => {
+//     return generatePage(teamData)
+// })
 
 //create a prompt that asks the user several questions
 //first questions: team manager's name, employee ID, email address, office number
@@ -295,4 +364,5 @@ promptUser()
 
 //Intern will have school, getSchool(), getRole()//overridden to return 'intern'
 
-const Generate = require('./lib/Employee.js')
+promptUser();
+

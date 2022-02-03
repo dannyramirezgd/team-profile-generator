@@ -3,27 +3,36 @@
 const Engineer = require('../lib/Engineer.js')
 const Intern = require('../lib/Intern.js')   
 const generateEngineers = engineerArr =>{
+    if (!engineerArr) {
+        return ``
+    } else {
     return `
     <section class="my-3" id="portfolio">
     <h2 class="text-dark bg-primary p-2 display-inline-block">Engineer</h2>
     <div class="flex-row justify-space-between">
-    ${engineerArr.forEach(engineer => new Engineer (engineer))}
+    ${engineerArr.forEach(engineer => new Engineer (engineer.name, engineer.id, engineer.email, engineer.github))}
     </div>
     </section>`
 }
+}
 const generateInterns = internArr => {
-    return `
+    if (!internArr) {
+        return ``
+    } else {
+        return `
     <section class="my-3" id="portfolio">
     <h2 class="text-dark bg-primary p-2 display-inline-block">Intern</h2>
     <div class="flex-row justify-space-between">
     ${internArr.forEach(intern => new Intern (intern))}
     </div>
-    </section>`
+    </section>` 
+    }
+
 }
 module.exports = templateData => { 
 
     const {teamRoles, ...manager} = templateData
-    console.log(teamRoles.engineers[0].name)
+    console.log(teamRoles.engineers)
 return `
 <!DOCTYPE html>
 <html lang="en">
