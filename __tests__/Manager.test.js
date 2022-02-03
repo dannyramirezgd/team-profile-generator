@@ -19,3 +19,9 @@ test('check for office number', () => {
 
     expect(manager.office).toEqual(123);
 })
+
+test('check for correct role',() => {
+    const manager = new Manager ('Mjolnir', 7, 'thor@ragnarok.com', 123);
+
+    expect(manager.getOffice()).toEqual('123');
+})

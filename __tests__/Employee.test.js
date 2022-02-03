@@ -25,3 +25,10 @@ test('check to see employee role', () => {
     expect(employee.getRole()).toEqual(expect.stringContaining('employee'));
 })
 
+test('check to see if employee id exists', () =>{
+    const employee = new Employee('Dave', 8, 'fax@gmail.com');
+
+    expect(employee.getId()).toEqual('8');
+})
+
+

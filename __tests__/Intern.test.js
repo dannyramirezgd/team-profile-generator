@@ -13,3 +13,9 @@ test('check to see if correct role', () => {
 
     expect(intern.getRole()).toEqual(expect.stringContaining('Intern'))
 })
+
+test('check to see if can obtain school', () => {
+    const intern = new Intern ('Mleh', 5, 'mleh@mleh.com', 'GW University')
+
+    expect(intern.getSchool()).toEqual(expect.stringContaining('GW University'))
+})
