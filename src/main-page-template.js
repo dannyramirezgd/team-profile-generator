@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+const fs = require('fs');
+
+const startingHTML = () => {
+    const text =  `<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -12,4 +15,12 @@
             <span class="navbar-brand mb-0 h1 w-100 text-center">Team Profile</span>
         </nav>
         <div class="container">
-            <div class="row">
+            <div class="row">`;
+
+fs.writeFile('./dist/index.html', text, (err) => {
+    err ? console.log(err) : ''
+})
+}
+
+module.exports = startingHTML
+
