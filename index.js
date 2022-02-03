@@ -1,4 +1,5 @@
 //Generate a webpage that displays my team's basic info
+const writeFile = require('./utils/generate-site.js');
 const inquirer = require('inquirer');
 const promptUser = () => {
     return inquirer.prompt([
