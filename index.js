@@ -1,11 +1,41 @@
+//TO DO: THE TEMPLATE LITERAL FOR CONSTRUCTING NEW INTERNS AND ENGINEER ISN'T WORKING
+
 //Generate a webpage that displays my team's basic info
-const writeFile = require('./utils/generate-site.js');
+const { writeFile, copyFile } = require('./utils/generate-site.js');
+const generatePage = require('./src/page-template.js');
 const inquirer = require('inquirer');
+const mockData = {
+    name: 'man ',
+    id: 'man id',
+    email: 'man email',
+    number: 'man office',
+    role: 'Manager',
+    teamRoles: { 
+        engineers: [ 
+            {
+            name: 'eng',
+            id: 'eng id',
+            email: 'eng email',
+            github: 'eng user',
+            role: 'Engineer'
+            } 
+        ], 
+        interns: [   
+            {
+            name: 'int',
+            id: 'int id',
+            email: 'int email',
+            school: 'int school',
+            role: 'Intern'
+            } 
+        ] 
+        }
+  }
 const promptUser = () => {
     return inquirer.prompt([
         {
             type: 'input',
-            name: 'manager-name',
+            name: 'name',
             message: "What is your team manager's name?",
             validate: nameInput => {
                 if(nameInput){
@@ -44,7 +74,7 @@ const promptUser = () => {
         },
         {
             type: 'input',
-            name: 'office-number',
+            name: 'number',
             message: "What is the team manager's office number?",
             validate: officeInput => {
                 if(officeInput) {
@@ -59,8 +89,8 @@ const promptUser = () => {
 }
 const promptTeamRoles = (teamData) => {
     if(!teamData.teamRoles) {
-        teamData.teamRoles = [];
-        inquirer.prompt([
+        teamData.teamRoles = {};
+        return inquirer.prompt([
         {
             type: 'list',
             name: 'roles',
@@ -69,7 +99,7 @@ const promptTeamRoles = (teamData) => {
         },
     ]).then(response => {
         if(response.roles ==='Engineer'){
-            promptEngineer(teamData)
+            return promptEngineer(teamData)
         } else if (response.roles === 'Intern') {
             return promptIntern(teamData)
         } 
@@ -88,7 +118,6 @@ const promptTeamRoles = (teamData) => {
             } else if (response.roles === 'Intern') {
                 return promptIntern(teamData)
             } else {
-                console.log(teamData)
                 return teamData
             }
         })
@@ -153,7 +182,10 @@ const promptEngineer = teamData => {
     ])
     .then(roleData => {
         roleData.role = 'Engineer'
-        teamData.teamRoles.push(roleData)
+        if(!teamData.teamRoles.engineers){
+            teamData.teamRoles.engineers = [];
+        }
+        teamData.teamRoles.engineers.push(roleData)
         return(promptTeamRoles(teamData))
     })
 }
@@ -215,7 +247,10 @@ const promptIntern = teamData => {
     ])    
     .then(roleData => {
         roleData.role = 'Intern'
-        teamData.teamRoles.push(roleData)
+        if(!teamData.teamRoles.interns){
+            teamData.teamRoles.interns = [];
+        }
+        teamData.teamRoles.interns.push(roleData)
         return(promptTeamRoles(teamData))
     })
 }
@@ -223,11 +258,22 @@ const promptIntern = teamData => {
 promptUser()
 .then(teamData => {
     teamData.role = 'Manager'
-    promptTeamRoles(teamData)
+    return promptTeamRoles(teamData)
+})
+.then( teamData => {
+    return generatePage(teamData)
+})
+.then(pageHTML => {
+    writeFile(pageHTML)
+})
+.then(response => {
+    console.log(response);
+    return copyFile()
 })
 .then(teamData => {
-    return gneratePage(teamData)
+    return generatePage(teamData)
 })
+
 //create a prompt that asks the user several questions
 //first questions: team manager's name, employee ID, email address, office number
 //ask user if they want to add engineer or intern or finish building

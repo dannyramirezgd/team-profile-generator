@@ -13,3 +13,9 @@ test('check for correct role',() => {
 
     expect(manager.getRole()).toEqual(expect.stringContaining('Manager'));
 })
+
+test('check for office number', () => {
+    const manager = new Manager ('mjolnir', 2, 'email.com', 123)
+
+    expect(manager.office).toEqual(123);
+})
